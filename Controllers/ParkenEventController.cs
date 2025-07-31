@@ -6,6 +6,11 @@ using ParkenEvent;
 [Route("[controller]")]
 public class ParkenEventController : ControllerBase
 {
+    private const string CALENDAR_URL = "https://www.parkenstadion.dk/kalender";
+    private const string CLASSNAME_EVENTDATE = ".dato-begivenhed";
+    private const string CLASSNAME_EVENTDETAILS = ".heading-begivenhed-left";
+    private const string FCKDESCRIPTION = "F.C. København";
+    
     private readonly IHttpClientFactory _httpClientFactory;
 
     public ParkenEventController(IHttpClientFactory httpClientFactory)
@@ -16,10 +21,10 @@ public class ParkenEventController : ControllerBase
     [HttpGet("")]
     public async Task<IActionResult> CheckEvent()
     {
-        DateTime date = DateTime.UtcNow;
+        DateTime todaysDate = DateTime.UtcNow;
 
         var client = _httpClientFactory.CreateClient();
-        var response = await client.GetAsync("https://www.parkenstadion.dk/kalender");
+        var response = await client.GetAsync(CALENDAR_URL);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -32,16 +37,21 @@ public class ParkenEventController : ControllerBase
         var context = BrowsingContext.New(config);
         var document = await context.OpenAsync(req => req.Content(html));
 
-        var dateElements = document.QuerySelectorAll(".dato-begivenhed");
+        var dateElements = document.QuerySelectorAll(CLASSNAME_EVENTDATE); // all event dates, only the first element is really needed since events are always listed in order
+        var eventDetailsElement = document.QuerySelector(CLASSNAME_EVENTDETAILS); // first event description
+
         var found = dateElements.Select(el =>
         {
             DateTime.TryParse(el.TextContent.Trim(), out var eventDate);
             return eventDate;
-        }).Where(d => d.Date == date.Date);
-
+        }).Where(d => d.Date == todaysDate.Date);
+        bool isFCK = found.Any() && (eventDetailsElement?.TextContent.Trim().Equals(FCKDESCRIPTION) ?? false);
+        
         return Ok(new EventResponse
         {
+            TodaysDate = todaysDate.Date,
             isThereAnEventToday = found.Any(),
+            isFCK = isFCK,
             Events = [.. found]
         });
     }
