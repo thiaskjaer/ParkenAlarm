@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using AngleSharp;
 using ParkenEvent;
+using System.Globalization;
 
 [ApiController]
 [Route("[controller]")]
@@ -41,12 +42,18 @@ public class ParkenEventController : ControllerBase
         var eventDetailsElement = document.QuerySelector(CLASSNAME_EVENTDETAILS); // first event description
         var allEvents = dateElements.Select(el =>
         {
-            DateTime.TryParse(el.TextContent.Trim(), out var eventDate);
+            DateTime.TryParse(el.TextContent.Trim(), 
+                new CultureInfo("da-DK"), 
+                DateTimeStyles.None, 
+                out var eventDate);
             return eventDate;
         });
         var found = dateElements.Select(el =>
         {
-            DateTime.TryParse(el.TextContent.Trim(), out var eventDate);
+            DateTime.TryParse(el.TextContent.Trim(), 
+                new CultureInfo("da-DK"), 
+                DateTimeStyles.None, 
+                out var eventDate);
             return eventDate;
         }).Where(d => d.Date == todaysDate.Date);
         bool isFCK = found.Any() && (eventDetailsElement?.TextContent.Trim().Contains(FCKDESCRIPTION) ?? false);
