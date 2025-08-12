@@ -50,7 +50,7 @@ public class ParkenEventController : ControllerBase
         return Ok(new EventResponse
         {
             TodaysDate = todaysDate.Date,
-            EventDate = found.First().Date,
+            EventDate = found.FirstOrDefault(),
             isThereAnEventToday = found.Any(),
             isFCK = isFCK,
             Events = [.. found]
