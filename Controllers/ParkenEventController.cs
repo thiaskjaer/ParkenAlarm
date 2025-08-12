@@ -39,7 +39,11 @@ public class ParkenEventController : ControllerBase
 
         var dateElements = document.QuerySelectorAll(CLASSNAME_EVENTDATE); // all event dates, only the first element is really needed since events are always listed in order
         var eventDetailsElement = document.QuerySelector(CLASSNAME_EVENTDETAILS); // first event description
-
+        var allEvents = dateElements.Select(el =>
+        {
+            DateTime.TryParse(el.TextContent.Trim(), out var eventDate);
+            return eventDate;
+        });
         var found = dateElements.Select(el =>
         {
             DateTime.TryParse(el.TextContent.Trim(), out var eventDate);
@@ -50,7 +54,7 @@ public class ParkenEventController : ControllerBase
         return Ok(new EventResponse
         {
             TodaysDate = todaysDate.Date,
-            EventDate = found.FirstOrDefault(),
+            EventDate = allEvents.FirstOrDefault().Date,
             isThereAnEventToday = found.Any(),
             isFCK = isFCK,
             Events = [.. found]
