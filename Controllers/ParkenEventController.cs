@@ -45,11 +45,12 @@ public class ParkenEventController : ControllerBase
             DateTime.TryParse(el.TextContent.Trim(), out var eventDate);
             return eventDate;
         }).Where(d => d.Date == todaysDate.Date);
-        bool isFCK = found.Any() && (eventDetailsElement?.TextContent.Trim().Equals(FCKDESCRIPTION) ?? false);
+        bool isFCK = found.Any() && (eventDetailsElement?.TextContent.Trim().Contains(FCKDESCRIPTION) ?? false);
         
         return Ok(new EventResponse
         {
             TodaysDate = todaysDate.Date,
+            EventDate = found.First().Date,
             isThereAnEventToday = found.Any(),
             isFCK = isFCK,
             Events = [.. found]
