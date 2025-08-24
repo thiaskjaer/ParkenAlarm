@@ -6,5 +6,4 @@ public class EventResponse
     public bool isThereAnEventToday { get; set; }
     public string? EventDetails { get; set; }
     public bool isFCK { get; set; }
-
 }
