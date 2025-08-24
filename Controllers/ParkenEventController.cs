@@ -9,7 +9,7 @@ public class ParkenEventController : ControllerBase
 {
     private const string CALENDAR_URL = "https://www.parkenstadion.dk/kalender";
     private const string CLASSNAME_EVENTDATE = ".dato-begivenhed";
-    private const string CLASSNAME_EVENTDETAILS = ".heading-begivenhed-left";
+    private const string CLASSNAME_EVENTDETAILS = ".heading-begivenhed";
     private const string FCKDESCRIPTION = "F.C. København";
     
     private readonly IHttpClientFactory _httpClientFactory;
@@ -56,8 +56,8 @@ public class ParkenEventController : ControllerBase
         {
             TodaysDate = todaysDate.Date,
             isThereAnEventToday = found.Any(),
-            isFCK = isFCK,
-            Events = [.. found]
+            EventDetails = eventDetailsElement?.TextContent,
+            isFCK = isFCK
         });
     }
 }
