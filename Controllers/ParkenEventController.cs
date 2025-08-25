@@ -56,7 +56,7 @@ public class ParkenEventController : ControllerBase
         {
             TodaysDate = todaysDate.Date,
             isThereAnEventToday = found.Any(),
-            EventDetails = eventDetailsElement?.TextContent,
+            EventDetails = found.Any() ? eventDetailsElement?.TextContent : null,
             isFCK = isFCK
         });
     }
