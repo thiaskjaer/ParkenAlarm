@@ -1,4 +1,4 @@
-namespace ParkenEvent;
+namespace ParkenEvent.Models;
 
 public class EventResponse
 {
